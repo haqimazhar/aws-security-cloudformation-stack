@@ -8,7 +8,7 @@ Parameters:
     Default: NestedStacksBucket
 
 Resources:
-  AWSOrganizationalUnit:
+  AWSTestStack:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Sub https://${S3BucketName}.s3.ap-southeast-1.amazonaws.com/aws-test/template.yaml

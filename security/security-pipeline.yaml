@@ -16,7 +16,7 @@ Parameters:
     Default: 'Github-to-CodePipeline'
   S3BucketName:
     Type: String
-    Default: 'security-config-codepipeline-bucket'
+    Default: 'security-config-bucket-test'
   StackName:
     Type: String
     Default: 'SecurityCloudFormationStack'
@@ -106,7 +106,7 @@ Resources:
                 Provider: CloudFormation
                 Version: '1'
               Configuration:
-                ActionMode: REPLACE_ON_FAILURE
+                ActionMode: CREATE_UPDATE
                 Capabilities: 'CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND'
                 StackName: "security-config-pipeline"
                 TemplatePath: SourceArtifact::security/security-pipeline.yaml
@@ -289,6 +289,14 @@ Resources:
                 Action:
                   - iam:*
                 Resource: '*'
+        - PolicyName: S3FullAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:*
+                Resource: !Sub 'arn:${AWS::Partition}:s3:::${S3BucketName}/*'
 
 # aws cloudformation create-stack --stack-name security-config-pipeline \
 #   --template-body file://security-pipeline.yaml \

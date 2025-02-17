@@ -10,4 +10,4 @@ Resources:
   AWSTestStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub https://${S3BucketName}.s3.ap-southeast-1.amazonaws.com/aws-test/template.yaml
+      TemplateURL: !Sub https://${S3BucketName}.s3.ap-southeast-1.amazonaws.com/security/aws-test/template.yaml

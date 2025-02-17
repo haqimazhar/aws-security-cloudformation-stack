@@ -273,6 +273,10 @@ Resources:
                   - iam:AttachRolePolicy
                   - iam:DeleteRole
                 Resource: '*'
+              - Effect: Allow
+                Action:
+                  - iam:*
+                Resource: '*'
 
 # aws cloudformation create-stack --stack-name security-config-pipeline \
 #   --template-body file://security-pipeline.yaml \

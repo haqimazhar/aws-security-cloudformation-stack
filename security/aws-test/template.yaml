@@ -3,4 +3,4 @@ Resources:
   TestBucket:
     Type: 'AWS::S3::Bucket'
     Properties:
-      BucketName: 'haqim-test-bucket'
+      BucketName: 'haqim-test-bucket-aws'

@@ -60,7 +60,7 @@ Resources:
                     - !Ref BranchName
                 FilePaths:
                   Includes:
-                    - 'security/*'
+                    - 'security/**'
                     - "security-pipeline.yaml"
       Stages:
         - Name: Source

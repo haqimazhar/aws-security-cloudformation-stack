@@ -106,7 +106,7 @@ Resources:
                 Provider: CloudFormation
                 Version: '1'
               Configuration:
-                ActionMode: CREATE_UPDATE
+                ActionMode: REPLACE_ON_FAILURE
                 Capabilities: 'CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND'
                 StackName: "CodepipelineCFNStack"
                 TemplatePath: SourceArtifact::security/security-pipeline.yaml

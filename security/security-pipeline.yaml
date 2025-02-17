@@ -109,7 +109,7 @@ Resources:
                 ActionMode: CREATE_UPDATE
                 Capabilities: 'CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND'
                 StackName: "CodepipelineCFNStack"
-                TemplatePath: SourceArtifact::security-pipeline.yaml
+                TemplatePath: SourceArtifact::security/security-pipeline.yaml
                 RoleArn: !GetAtt CloudFormationExecutionRole.Arn
               InputArtifacts:
                 - Name: SourceArtifact

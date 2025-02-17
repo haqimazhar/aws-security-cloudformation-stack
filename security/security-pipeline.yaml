@@ -108,7 +108,7 @@ Resources:
               Configuration:
                 ActionMode: REPLACE_ON_FAILURE
                 Capabilities: 'CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND'
-                StackName: "CodepipelineCFNStack"
+                StackName: "security-config-pipeline"
                 TemplatePath: SourceArtifact::security/security-pipeline.yaml
                 RoleArn: !GetAtt CloudFormationExecutionRole.Arn
               InputArtifacts:

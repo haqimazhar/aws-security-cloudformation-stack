@@ -257,6 +257,14 @@ Resources:
                   - codestar-connections:UseConnection
                   - codestar-connections:*
                 Resource: !Sub 'arn:${AWS::Partition}:codestar-connections:${AWS::Region}:${AWS::AccountId}:connection/*'
+        - PolicyName: CodePipelinePemission
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - codepipeline:*
+                Resource: '*'
         - PolicyName: CloudFormationDeployPolicy
           PolicyDocument:
             Version: '2012-10-17'

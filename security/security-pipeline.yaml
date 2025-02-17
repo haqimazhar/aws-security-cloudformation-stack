@@ -138,17 +138,17 @@ Resources:
               InputArtifacts:
                 - Name: SourceArtifact
 
-        - Name: Approval
-          Actions:
-            - Name: Manual-Approval
-              ActionTypeId:
-                Category: Approval
-                Owner: AWS
-                Provider: Manual
-                Version: '1'
-              RunOrder: 1
-              Configuration:
-                CustomData: 'Review and approve the change set before deployment'
+        # - Name: Approval
+        #   Actions:
+        #     - Name: Manual-Approval
+        #       ActionTypeId:
+        #         Category: Approval
+        #         Owner: AWS
+        #         Provider: Manual
+        #         Version: '1'
+        #       RunOrder: 1
+        #       Configuration:
+        #         CustomData: 'Review and approve the change set before deployment'
 
         - Name: Execute-Change-Set
           Actions:

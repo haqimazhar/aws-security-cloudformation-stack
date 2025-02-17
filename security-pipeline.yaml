@@ -1,0 +1,207 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'CodePipeline for Security changes, executing CloudFormation stacks with Change Sets'
+
+Parameters:
+  BranchName:
+    Type: String
+    Default: 'master'
+  FullRepositoryId:
+    Type: String
+    Default: 'haqimazhar/aws-security-cloudformation-stack'
+  CodePipelineName:
+    Type: String
+    Default: 'security-config-pipeline'
+  ConnectionName:
+    Type: String
+    Default: 'Github-to-CodePipeline'
+  S3BucketName:
+    Type: String
+    Default: 'security-config-codepipeline-bucket'
+  StackName:
+    Type: String
+    Default: 'SecurityCloudFormationStack'
+
+Resources:
+  #####################################
+  # CodeStar Connection
+  #####################################
+  GitHubConnection:
+    Type: 'AWS::CodeStarConnections::Connection'
+    Properties:
+      ConnectionName: !Sub ${ConnectionName}-security
+      ProviderType: 'GitHub'
+
+  #####################################
+  # S3 bucket for CFN templates
+  #####################################
+  PipelineArtifactStoreS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref S3BucketName
+
+  #####################################
+  # CodePipeline
+  #####################################
+  SecurityPipeline:
+    Type: 'AWS::CodePipeline::Pipeline'
+    Properties:
+      Name: !Ref CodePipelineName
+      RoleArn: !GetAtt CodePipelineRole.Arn
+      ArtifactStore:
+        Type: S3
+        Location: !Ref S3BucketName
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: Source
+              ActionTypeId:
+                Category: Source
+                Owner: AWS
+                Provider: CodeStarSourceConnection
+                Version: '1'
+              RunOrder: 1
+              Configuration:
+                BranchName: !Ref BranchName
+                ConnectionArn: !GetAtt GitHubConnection.ConnectionArn
+                DetectChanges: 'true'
+                FullRepositoryId: !Ref FullRepositoryId
+                OutputArtifactFormat: CODE_ZIP
+                FilePath: 'security/'
+              OutputArtifacts:
+                - Name: SourceArtifact
+              Namespace: SourceVariables
+
+        - Name: Copy-to-S3
+          Actions:
+            - Name: Copy-to-S3
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: S3
+                Version: '1'
+              RunOrder: 1
+              Configuration:
+                BucketName: !Ref S3BucketName
+                Extract: 'true'
+              InputArtifacts:
+                - Name: SourceArtifact
+
+        - Name: Create-Change-Set
+          Actions:
+            - Name: Create-Change-Set
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: '1'
+              RunOrder: 1
+              Configuration:
+                ActionMode: CHANGE_SET_REPLACE
+                Capabilities: 'CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND'
+                StackName: !Ref StackName
+                ChangeSetName: !Sub '${StackName}-changeset'
+                TemplatePath: SourceArtifact::security/cloudformation-template.yaml
+                RoleArn: !GetAtt CloudFormationExecutionRole.Arn
+              InputArtifacts:
+                - Name: SourceArtifact
+
+        - Name: Approval
+          Actions:
+            - Name: Manual-Approval
+              ActionTypeId:
+                Category: Approval
+                Owner: AWS
+                Provider: Manual
+                Version: '1'
+              RunOrder: 1
+              Configuration:
+                CustomData: 'Review and approve the change set before deployment'
+
+        - Name: Execute-Change-Set
+          Actions:
+            - Name: Execute-Change-Set
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: '1'
+              RunOrder: 1
+              Configuration:
+                ActionMode: CHANGE_SET_EXECUTE
+                StackName: !Ref StackName
+                ChangeSetName: !Sub '${StackName}-changeset'
+                RoleArn: !GetAtt CloudFormationExecutionRole.Arn
+              InputArtifacts:
+                - Name: SourceArtifact
+
+  #####################################
+  # IAM Roles
+  #####################################
+  CodePipelineRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: SecurityCodePipelineRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: codepipeline.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: CodeStarSourceConnectionAccessPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: 'Allow'
+                Action:
+                  - codestar-connections:UseConnection
+                Resource: !Sub 'arn:${AWS::Partition}:codestar-connections:${AWS::Region}:${AWS::AccountId}:connection/*'
+        - PolicyName: CodePipelineS3Access
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                Resource: !Sub 'arn:${AWS::Partition}:s3:::${S3BucketName}/*'
+
+  CloudFormationExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: SecurityCloudFormationExecutionRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: 
+                - cloudformation.amazonaws.com
+            Action: 
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: CloudFormationDeployPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - cloudformation:*
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                Resource: !Sub 'arn:${AWS::Partition}:s3:::${S3BucketName}/*'
+              - Effect: Allow
+                Action:
+                  - iam:CreateRole
+                  - iam:PassRole
+                  - iam:AttachRolePolicy
+                  - iam:DeleteRole
+                Resource: '*'
+
+# aws cloudformation create-stack --stack-name security-config-pipeline \
+#   --template-body file://security-pipeline.yaml \
+#   --capabilities CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND \

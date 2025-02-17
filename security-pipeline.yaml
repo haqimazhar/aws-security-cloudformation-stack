@@ -50,6 +50,17 @@ Resources:
       ArtifactStore:
         Type: S3
         Location: !Ref S3BucketName
+      Triggers:
+        - ProviderType: CodeStarSourceConnection
+          GitConfiguration:
+            SourceActionName: Source
+            Push:
+              - Branches:
+                  Includes:
+                    - !Ref BranchName
+                FilePaths:
+                  Includes:
+                    - 'security/*'
       Stages:
         - Name: Source
           Actions:
@@ -66,7 +77,6 @@ Resources:
                 DetectChanges: 'true'
                 FullRepositoryId: !Ref FullRepositoryId
                 OutputArtifactFormat: CODE_ZIP
-                FilePath: 'security/'
               OutputArtifacts:
                 - Name: SourceArtifact
               Namespace: SourceVariables

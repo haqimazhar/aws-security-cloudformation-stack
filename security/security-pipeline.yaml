@@ -131,6 +131,10 @@ Resources:
                 ChangeSetName: !Sub '${StackName}-changeset'
                 TemplatePath: SourceArtifact::security/template.yaml
                 RoleArn: !GetAtt CloudFormationExecutionRole.Arn
+                ParameterOverrides: !Sub |
+                  {
+                    "S3BucketName": "${PipelineArtifactStoreS3Bucket}"
+                  }
               InputArtifacts:
                 - Name: SourceArtifact
 

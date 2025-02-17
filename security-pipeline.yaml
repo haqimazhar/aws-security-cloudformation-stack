@@ -61,6 +61,7 @@ Resources:
                 FilePaths:
                   Includes:
                     - 'security/*'
+                    - "security-pipeline.yaml"
       Stages:
         - Name: Source
           Actions:

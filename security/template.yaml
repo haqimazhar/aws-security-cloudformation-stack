@@ -13,7 +13,7 @@ Resources:
     Properties:
       TemplateURL: !Sub https://${S3BucketName}.s3.ap-southeast-1.amazonaws.com/security/aws-test/template.yaml
   
-  # AWSGuardDutyStack:
-  #   Type: AWS::CloudFormation::Stack
-  #   Properties:
-  #     TemplateURL: !Sub https://${S3BucketName}.s3.ap-southeast-1.amazonaws.com/security/aws-guard-duty/template.yaml
+  AWSGuardDutyStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://${S3BucketName}.s3.ap-southeast-1.amazonaws.com/security/aws-guard-duty/template.yaml

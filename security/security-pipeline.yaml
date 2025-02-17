@@ -163,6 +163,10 @@ Resources:
                 ActionMode: CHANGE_SET_EXECUTE
                 StackName: !Ref StackName
                 ChangeSetName: !Sub '${StackName}-changeset'
+                ParameterOverrides: !Sub |
+                  {
+                    "S3BucketName": "${PipelineArtifactStoreS3Bucket}"
+                  }
                 RoleArn: !GetAtt CloudFormationExecutionRole.Arn
               InputArtifacts:
                 - Name: SourceArtifact

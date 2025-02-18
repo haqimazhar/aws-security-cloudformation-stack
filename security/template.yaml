@@ -5,7 +5,7 @@ Parameters:
   S3BucketName:
     Description: S3 bucket name for the Nested Stacks. S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).
     Type: String
-    Default: security-config-bucket-test
+
 
 Resources:
   AWSTestStack:

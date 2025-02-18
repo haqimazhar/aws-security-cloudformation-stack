@@ -1,10 +1,10 @@
-AWSTemplateFormatVersion: 
+AWSTemplateFormatVersion: '2010-09-09'
 Description: AWS Detective Nested Stack 
 
 Resources:
-DetectiveGraph:
-  Type: AWS::Detective::Graph
-  Properties:
-    Tags: 
-      - Key: Name
-        Value: DetectiveGraph
+  DetectiveGraph:
+    Type: AWS::Detective::Graph
+    Properties:
+      Tags: 
+        - Key: Name
+          Value: DetectiveGraph

@@ -18,7 +18,7 @@ Resources:
     Properties:
       TemplateURL: !Sub https://${S3BucketName}.s3.ap-southeast-1.amazonaws.com/security/aws-guard-duty/template.yaml
   
-  # AWSDetectiveStack:
-  #   Type: AWS::CloudFormation::Stack
-  #   Properties:
-  #     TemplateURL: !Sub https://${S3BucketName}.s3.ap-southeast-1.amazonaws.com/security/aws-detective/template.yaml
+  AWSDetectiveStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://${S3BucketName}.s3.ap-southeast-1.amazonaws.com/security/aws-detective/template.yaml

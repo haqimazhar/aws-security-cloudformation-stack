@@ -317,7 +317,7 @@ Resources:
                 Action:
                   - detective:*
                 Resource: "*"
-        - PolicyName: ChatbotFullAccess
+        - PolicyName: SlackNotificationPermission
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
@@ -325,6 +325,7 @@ Resources:
                 Action:
                   - chatbot:*
                   - sns:*
+                  - events:*
                 Resource: "*"
 
 # aws cloudformation create-stack --stack-name security-config-pipeline \

@@ -23,7 +23,7 @@ Resources:
       ConfigurationName: 'GuardDutySlackNotification'
       SlackWorkspaceId: !Ref SlackWorkspaceId
       SlackChannelId: !Ref SlackChannelId
-      IamRoleArn: !Ref ChatbotIamRole
+      IamRoleArn: !GetAtt ChatbotIamRole.Arn
       SnsTopicArns:
         - !Ref GuardDutySnsTopic
     DependsOn:

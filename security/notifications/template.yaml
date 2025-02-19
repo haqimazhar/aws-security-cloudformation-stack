@@ -26,6 +26,8 @@ Resources:
       IamRoleArn: !Ref ChatbotIamRole
       SnsTopicArns:
         - !Ref GuardDutySnsTopic
+    DependsOn:
+         - ChatbotIamRole
 
   ChatbotIamRole:
     Type: 'AWS::IAM::Role'

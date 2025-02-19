@@ -133,7 +133,9 @@ Resources:
                 RoleArn: !GetAtt CloudFormationExecutionRole.Arn
                 ParameterOverrides: !Sub |
                   {
-                    "S3BucketName": "${PipelineArtifactStoreS3Bucket}"
+                    "S3BucketName": "${PipelineArtifactStoreS3Bucket}",
+                    "SlackWorkspaceId": "T07K72NTJLX",
+                    "SlackChannelId": "C08D6S2PFLP",
                   }
               InputArtifacts:
                 - Name: SourceArtifact
@@ -165,7 +167,9 @@ Resources:
                 ChangeSetName: !Sub '${StackName}-changeset'
                 ParameterOverrides: !Sub |
                   {
-                    "S3BucketName": "${PipelineArtifactStoreS3Bucket}"
+                    "S3BucketName": "${PipelineArtifactStoreS3Bucket}",
+                    "SlackWorkspaceId": "T07K72NTJLX",
+                    "SlackChannelId": "C08D6S2PFLP",
                   }
                 RoleArn: !GetAtt CloudFormationExecutionRole.Arn
               InputArtifacts:

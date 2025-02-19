@@ -5,7 +5,12 @@ Parameters:
   S3BucketName:
     Description: S3 bucket name for the Nested Stacks. S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).
     Type: String
-
+  SlackWorkspaceId:
+    Type: String
+    Description: ID of the Slack workspace authorized with AWS Chatbot.
+  SlackChannelId:
+    Type: String
+    Description: ID of the Slack channel to send notifications to.
 
 Resources:
   AWSTestStack:
@@ -22,3 +27,11 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Sub https://${S3BucketName}.s3.ap-southeast-1.amazonaws.com/security/aws-detective/template.yaml
+
+  AWSNotificationsStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://${S3BucketName}.s3.ap-southeast-1.amazonaws.com/security/notifications/template.yaml
+      Parameters:
+        SlackWorkspaceId: !Ref SlackWorkspaceId
+        SlackChannelId: !Ref SlackChannelId

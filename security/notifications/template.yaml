@@ -1,0 +1,72 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  AWS CloudFormation template to set up Amazon GuardDuty with notifications
+  sent to a Slack channel via AWS Chatbot and Amazon SNS.
+
+Parameters:
+  SlackWorkspaceId:
+    Type: String
+    Description: ID of the Slack workspace authorized with AWS Chatbot.
+  SlackChannelId:
+    Type: String
+    Description: ID of the Slack channel to send notifications to.
+  GuardDutyFindingSeverity:
+    Type: String
+    Default: '4'
+    Description: >
+      Minimum severity level of GuardDuty findings to trigger notifications
+      (e.g., '4' for medium and above).
+Resources:
+
+  GuardDutySnsTopic:
+    Type: 'AWS::SNS::Topic'
+    Properties:
+      DisplayName: 'GuardDuty Findings Topic'
+
+  ChatbotSlackChannelConfig:
+    Type: 'AWS::Chatbot::SlackChannelConfiguration'
+    Properties:
+      ConfigurationName: 'GuardDutySlackNotification'
+      SlackWorkspaceId: !Ref SlackWorkspaceId
+      SlackChannelId: !Ref SlackChannelId
+      IamRoleArn: !Ref ChatbotIamRole
+      SnsTopicArns:
+        - !Ref GuardDutySnsTopic
+
+  ChatbotIamRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: 'Allow'
+            Principal:
+              Service: 'chatbot.amazonaws.com'
+            Action: 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/ReadOnlyAccess'
+
+  GuardDutyEventRule:
+    Type: 'AWS::Events::Rule'
+    Properties:
+      Description: 'Rule to capture GuardDuty findings and send notifications to SNS.'
+      EventPattern:
+        source:
+          - 'aws.guardduty'
+        detail-type:
+          - 'GuardDuty Finding'
+        detail:
+          severity:
+            - numeric: ['>=', !Ref GuardDutyFindingSeverity]
+      State: 'ENABLED'
+      Targets:
+        - Arn: !Ref GuardDutySnsTopic
+          Id: 'GuardDutySnsTarget'
+
+Outputs:
+  SnsTopicArn:
+    Description: 'ARN of the SNS topic for GuardDuty findings.'
+    Value: !Ref GuardDutySnsTopic
+  ChatbotConfigArn:
+    Description: 'ARN of the AWS Chatbot Slack channel configuration.'
+    Value: !Ref ChatbotSlackChannelConfig

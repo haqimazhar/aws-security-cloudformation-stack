@@ -135,7 +135,7 @@ Resources:
                   {
                     "S3BucketName": "${PipelineArtifactStoreS3Bucket}",
                     "SlackWorkspaceId": "T07K72NTJLX",
-                    "SlackChannelId": "C08D6S2PFLP",
+                    "SlackChannelId": "C08D6S2PFLP"
                   }
               InputArtifacts:
                 - Name: SourceArtifact
@@ -169,7 +169,7 @@ Resources:
                   {
                     "S3BucketName": "${PipelineArtifactStoreS3Bucket}",
                     "SlackWorkspaceId": "T07K72NTJLX",
-                    "SlackChannelId": "C08D6S2PFLP",
+                    "SlackChannelId": "C08D6S2PFLP"
                   }
                 RoleArn: !GetAtt CloudFormationExecutionRole.Arn
               InputArtifacts:
